@@ -14,6 +14,8 @@ typedef struct
     GtkWidget *text_view;
     GtkWidget *entry;
     gchar *received_message; // New field to store received message
+    GtkWidget *name_entry;
+    // char name[100];
 } ClientData;
 
 void *receiveMessages(void *arg);
@@ -61,6 +63,10 @@ int main(int argc, char *argv[])
     gtk_container_add(GTK_CONTAINER(scroll), text_view);
     gtk_box_pack_start(GTK_BOX(vbox), scroll, TRUE, TRUE, 0);
 
+    // Create name entry
+    GtkWidget *name_entry = gtk_entry_new();
+    gtk_box_pack_start(GTK_BOX(vbox), name_entry, TRUE, TRUE, 0);
+
     // Create entry
     entry = gtk_entry_new();
     gtk_box_pack_start(GTK_BOX(vbox), entry, TRUE, TRUE, 0);
@@ -70,6 +76,8 @@ int main(int argc, char *argv[])
     client_data->text_view = text_view;
     client_data->entry = entry;
     client_data->received_message = NULL;
+    client_data->name_entry = name_entry; // Assign the name_entry widget
+
 
     // Connect button signals
     g_signal_connect(button_direct, "clicked", G_CALLBACK(sendDirectMessage), (gpointer)client_data);
@@ -106,6 +114,9 @@ int main(int argc, char *argv[])
 
     // Update the client data
     client_data->socket = socket_fd;
+    // printf("Enter your name: ");
+    // fgets(client_data->name, sizeof(client_data->name), stdin);
+    // client_data->name[strcspn(client_data->name, "\n")] = '\0';  // Remove trailing newline character
 
     // Create thread to receive messages
     pthread_create(&tid, NULL, receiveMessages, (void *)client_data);
@@ -193,6 +204,7 @@ void sendGroupMessage(GtkWidget *widget, gpointer data)
     int socket = client_data->socket;
     GtkWidget *entry = client_data->entry;
     const gchar *message = gtk_entry_get_text(GTK_ENTRY(entry));
+    const gchar *name = gtk_entry_get_text(GTK_ENTRY(client_data->name_entry)); // Retrieve the user's name
 
     if (socket == -1)
     {
@@ -207,7 +219,7 @@ void sendGroupMessage(GtkWidget *widget, gpointer data)
 
     // Modify the message to indicate it's a group chat message
     char modified_message[BUFFER_SIZE];
-    snprintf(modified_message, BUFFER_SIZE, "[Group] %s", message);
+    snprintf(modified_message, BUFFER_SIZE, "[Group] %s: %s", name, message);
 
     if (send(socket, modified_message, strlen(modified_message), 0) < 0)
     {
