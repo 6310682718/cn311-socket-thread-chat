@@ -10,7 +10,7 @@
 
 #define BUFFER_SIZE 1024
 #define MAX_CLIENTS 10
-
+#define PORT 8888
 typedef struct
 {
     int client_socket;
@@ -53,7 +53,7 @@ int main()
     // Set server address
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = INADDR_ANY;
-    server_address.sin_port = htons(8080);
+    server_address.sin_port = htons(PORT);
 
     // Bind server socket to address and port
     if (bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address)) == -1)

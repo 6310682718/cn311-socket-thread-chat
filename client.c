@@ -7,7 +7,7 @@
 #include <gtk/gtk.h>
 
 #define BUFFER_SIZE 1024
-
+#define PORT 8888
 typedef struct
 {
     int socket;
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     // Connect to the server
     struct sockaddr_in server_address;
     server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(8080);
+    server_address.sin_port = htons(PORT);
     if (inet_pton(AF_INET, "127.0.0.1", &(server_address.sin_addr)) <= 0)
     {
         perror("Invalid address/ Address not supported");
