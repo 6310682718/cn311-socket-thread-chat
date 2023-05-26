@@ -136,7 +136,15 @@ void *handleClient(void *arg)
     while ((bytes_received = recv(client_socket, buffer, BUFFER_SIZE - 1, 0)) > 0)
     {
         buffer[bytes_received] = '\0';
+
+        // Acquire mutex lock before printing
+        pthread_mutex_lock(&(server_data->mutex));
+
         printf("Received message from %s: %s\n", client_ip, buffer);
+
+
+        // Release mutex lock after printing
+        pthread_mutex_unlock(&(server_data->mutex));
 
         // Broadcast message to other clients
         pthread_mutex_lock(&(server_data->mutex));
@@ -145,6 +153,7 @@ void *handleClient(void *arg)
             if (server_data->thread_data[i].client_info.client_socket != client_socket)
             {
                 send(server_data->thread_data[i].client_info.client_socket, buffer, strlen(buffer), 0);
+                send(server_data->thread_data[i].client_info.client_socket, "\n", 1, 0); // Add a newline after the message
             }
         }
         pthread_mutex_unlock(&(server_data->mutex));

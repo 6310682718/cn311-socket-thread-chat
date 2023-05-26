@@ -114,9 +114,6 @@ int main(int argc, char *argv[])
 
     // Update the client data
     client_data->socket = socket_fd;
-    // printf("Enter your name: ");
-    // fgets(client_data->name, sizeof(client_data->name), stdin);
-    // client_data->name[strcspn(client_data->name, "\n")] = '\0';  // Remove trailing newline character
 
     // Create thread to receive messages
     pthread_create(&tid, NULL, receiveMessages, (void *)client_data);
@@ -137,6 +134,7 @@ void *receiveMessages(void *arg)
     GtkWidget *text_view = client_data->text_view;
 
     char buffer[BUFFER_SIZE];
+    GList *received_messages = NULL; // Store the received messages
 
     while (1)
     {
@@ -156,11 +154,24 @@ void *receiveMessages(void *arg)
 
         buffer[bytes_received] = '\0';
 
+        // Check if the received message is a duplicate
+        if (!g_list_find_custom(received_messages, buffer, (GCompareFunc)strcmp))
+        {
+            // Allocate memory for the received message
+            client_data->received_message = g_strdup(buffer);
+
+            // Add the message to the received_messages list
+            received_messages = g_list_append(received_messages, client_data->received_message);
+
+            // Update the GUI from the main thread
+            g_idle_add(appendMessageIdle, client_data);
+        }
+
         // Allocate memory for the received message
-        client_data->received_message = g_strdup(buffer);
+        // client_data->received_message = g_strdup(buffer);
 
         // Update the GUI from the main thread
-        g_idle_add(appendMessageIdle, client_data);
+        // g_idle_add(appendMessageIdle, client_data);
     }
 
     close(socket);
@@ -237,9 +248,16 @@ void appendMessage(GtkWidget *text_view, const gchar *message)
 {
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     GtkTextIter end;
-
+    gchar *trimmed_message = g_strstrip(g_strdup(message));
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, message, -1);
+    gtk_text_buffer_insert(buffer, &end, "\n", -1);
+
+    if (message[strlen(message) - 1] != '\n') {
+        gtk_text_buffer_insert(buffer, &end, "\n", -1);
+    }
+    
+    g_free(trimmed_message);
 }
 
 gboolean appendMessageIdle(gpointer data)
