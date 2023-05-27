@@ -48,9 +48,9 @@ int main(int argc, char *argv[])
 
     // Create buttons
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    button_direct = gtk_button_new_with_label("Direct Message");
+    //button_direct = gtk_button_new_with_label("Direct Message");
     button_group = gtk_button_new_with_label("Group Chat");
-    gtk_box_pack_start(GTK_BOX(hbox), button_direct, TRUE, TRUE, 0);
+    //gtk_box_pack_start(GTK_BOX(hbox), button_direct, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), button_group, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 
@@ -65,10 +65,12 @@ int main(int argc, char *argv[])
 
     // Create name entry
     GtkWidget *name_entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(name_entry), "Input name:");
     gtk_box_pack_start(GTK_BOX(vbox), name_entry, TRUE, TRUE, 0);
 
     // Create entry
     entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(entry), "Input text:");
     gtk_box_pack_start(GTK_BOX(vbox), entry, TRUE, TRUE, 0);
 
     // Set client data
@@ -80,7 +82,7 @@ int main(int argc, char *argv[])
 
 
     // Connect button signals
-    g_signal_connect(button_direct, "clicked", G_CALLBACK(sendDirectMessage), (gpointer)client_data);
+    //g_signal_connect(button_direct, "clicked", G_CALLBACK(sendDirectMessage), (gpointer)client_data);
     g_signal_connect(button_group, "clicked", G_CALLBACK(sendGroupMessage), (gpointer)client_data);
 
     // Show all widgets
