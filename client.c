@@ -118,6 +118,7 @@ int main(int argc, char *argv[])
     client_data->socket = socket_fd;
 
     // Create thread to receive messages
+    // receiveMessages(&client_data);
     pthread_create(&tid, NULL, receiveMessages, (void *)client_data);
 
     // Start the GTK main loop
