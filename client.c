@@ -37,9 +37,10 @@ int main(int argc, char *argv[])
 
     // Create window
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(window), 600, 500);
+    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
     gtk_window_set_title(GTK_WINDOW(window), "Chat Client");
     gtk_container_set_border_width(GTK_CONTAINER(window), 10);
-    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     // Create VBox
@@ -48,9 +49,9 @@ int main(int argc, char *argv[])
 
     // Create buttons
     hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    //button_direct = gtk_button_new_with_label("Direct Message");
+    // button_direct = gtk_button_new_with_label("Direct Message");
     button_group = gtk_button_new_with_label("Group Chat");
-    //gtk_box_pack_start(GTK_BOX(hbox), button_direct, TRUE, TRUE, 0);
+    // gtk_box_pack_start(GTK_BOX(hbox), button_direct, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(hbox), button_group, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 
@@ -80,9 +81,8 @@ int main(int argc, char *argv[])
     client_data->received_message = NULL;
     client_data->name_entry = name_entry; // Assign the name_entry widget
 
-
     // Connect button signals
-    //g_signal_connect(button_direct, "clicked", G_CALLBACK(sendDirectMessage), (gpointer)client_data);
+    // g_signal_connect(button_direct, "clicked", G_CALLBACK(sendDirectMessage), (gpointer)client_data);
     g_signal_connect(button_group, "clicked", G_CALLBACK(sendGroupMessage), (gpointer)client_data);
 
     // Show all widgets
@@ -255,10 +255,11 @@ void appendMessage(GtkWidget *text_view, const gchar *message)
     gtk_text_buffer_insert(buffer, &end, message, -1);
     gtk_text_buffer_insert(buffer, &end, "\n", -1);
 
-    if (message[strlen(message) - 1] != '\n') {
+    if (message[strlen(message) - 1] != '\n')
+    {
         gtk_text_buffer_insert(buffer, &end, "\n", -1);
     }
-    
+
     g_free(trimmed_message);
 }
 
