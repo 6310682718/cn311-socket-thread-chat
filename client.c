@@ -249,6 +249,10 @@ void sendGroupMessage(GtkWidget *widget, gpointer data)
 
 void appendMessage(GtkWidget *text_view, const gchar *message)
 {
+    if (message == NULL) {
+        return; // Handle NULL message gracefully
+    }
+    
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
     GtkTextIter end;
     gchar *trimmed_message = g_strstrip(g_strdup(message));
